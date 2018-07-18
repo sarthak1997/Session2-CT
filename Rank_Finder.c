@@ -9,7 +9,7 @@ struct cell{
 	Int left;
 	Int right;
 };
-
+/*
 int leftChild(int i)
 {
 	return 2*i+1;
@@ -50,6 +50,40 @@ void addElement(struct cell *BST,Int num)
 				i=BST[i].left;
 		}
 	}
+}*/
+
+Int addElement(struct cell *BST,Int num,Int index,Int size)
+{
+	BST[index].num=num;
+	Int i;
+	for(i=0;i<size;)
+	{
+		if(num>BST[i].num)
+		{
+			if(BST[i].right==-1)
+			{
+	//			printf("\nAddedRight %d %d\n",BST[i].num,num);
+				BST[i].right=index;
+				return 1;
+			}
+			else
+				i=BST[i].right;
+		}
+		else if(num<BST[i].num)
+		{
+			if(BST[i].left==-1)
+			{
+	//			printf("\nAdded Left %d %d\n",BST[i].num,num);	
+				BST[i].left=index;
+				return 1;
+			}
+			else
+				i=BST[i].left;
+		}
+		else
+			return 0;
+		//printf("\nI=%d\n",i);
+	}
 }
 
 void init(struct cell *BST,Int size)
@@ -62,21 +96,33 @@ void init(struct cell *BST,Int size)
 	}
 }
 
-Int inorder(struct cell *BST,struct cell node,Int rank)
+int a;
+
+void inorder(struct cell *BST,struct cell node,Int rank)
 {
-	static Int index;
-	if(node.left!=-1)
-	{
-		return inorder(BST,BST[node.left],rank);
-	}
-	if(rank==index+1)
-		return node.num;
-	else
-		index++;
+	static Int index=0;
+	//printf("\na=%d\n",a);
+	if(index==-1)
+		return;
 	if(node.right!=-1)
 	{
-		return inorder(BST,BST[node.right],rank);
+		
+		inorder(BST,BST[node.right],rank);
 	}
+	//printf("\n%d - %d\n",node.num,index);
+	if(rank==index+1)
+	{
+		a = node.num;
+		index=-1;
+		return;
+	}
+	else if(index!=-1)
+		index++;
+	if(node.left!=-1)
+	{
+		inorder(BST,BST[node.left],rank);
+	}
+	//printf("\na=%d\n",a);
 }
 
 int main()
@@ -91,8 +137,9 @@ int main()
 	}
 	Int *input=(Int*)malloc(sizeof(Int)*size);
 	Int i;
-	struct cell *BST=(struct cell*)malloc(sizeof(struct cell)*(2$size-2));
-	init(BST,2$size+2);
+	struct cell *BST=(struct cell*)malloc(sizeof(struct cell)*size);
+	init(BST,size);
+	printf("\nEnter array elements\n");
 	for(i=0;i<size;i++)
 	{
 		scanf("%d",&input[i]);
@@ -103,15 +150,27 @@ int main()
 		}
 	}
 	BST[0].num=input[0];
+	Int BST_size=1;
 	for(i=1;i<size;i++)
 	{
-		addElement(BST,input[i]);
+		BST_size+=addElement(BST,input[i],i,size);
 	}
 
-	printf("\nEnter the rank - \n");
+	printf("\nEnter the rank -");
 	Int rank;
 	scanf("%d",&rank);
-	Int result = inorder(BST,BST[0],rank);
-	printf("%d",result);
+	while(1)
+	{
+		if(rank<=BST_size && rank>0)
+			break;
+		else
+		{
+			printf("\nRank you entered does fit according to the input. Enter again - ");
+			fflush(stdin);
+			scanf("%d",&rank);
+		}
+	}
+	inorder(BST,BST[0],rank);
+	printf("\nRESULT = %d\n",a);
 	return 0;
 }
