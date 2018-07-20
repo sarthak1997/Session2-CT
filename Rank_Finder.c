@@ -1,57 +1,23 @@
+//program to find the nth rank element in array such that greater element has higher rank
+
 #include<stdio.h>
 #include<stdlib.h>
 
 #define MAX_INT 32767
 #define Int int
 
+//node for a BST
 struct cell{
 	Int num;
 	Int left;
 	Int right;
 };
+
 /*
-int leftChild(int i)
-{
-	return 2*i+1;
-}
 
-int rightChild(int i)
-{
-	return 2*i+2;
-}
+method to handle addition of element in BST such that addition is made within in an array of defined size i.e number of elements of input and not of 2^n+2
 
-void addElement(struct cell *BST,Int num)
-{
-	int i=0;
-	while(1)
-	{
-		if(num>BST[i].num)
-		{
-			if(BST[i].right==-1)
-			{
-				printf("\nRightAdded %d\n",BST[i].num);
-				BST[rightChild(i)].num=num;
-				BST[i].right=rightChild(i);
-				break;
-			}
-			else
-				i=BST[i].right;
-		}
-		else if(num<BST[i].num)
-		{
-			if(BST[i].left==-1)
-			{
-				printf("\nLeft Added %d\n",BST[i].num);
-				BST[leftChild(i)].num=num;
-				BST[i].left=leftChild(i);
-				break;
-			}
-			else
-				i=BST[i].left;
-		}
-	}
-}*/
-
+*/
 Int addElement(struct cell *BST,Int num,Int index,Int size)
 {
 	BST[index].num=num;
@@ -86,6 +52,7 @@ Int addElement(struct cell *BST,Int num,Int index,Int size)
 	}
 }
 
+//initialize to check for null pointer later
 void init(struct cell *BST,Int size)
 {
 	int i;
@@ -97,8 +64,8 @@ void init(struct cell *BST,Int size)
 }
 
 int a;
-
-void inorder(struct cell *BST,struct cell node,Int rank)
+//method that traverse BST in reverse of inorder to find the rank as it basically arranges the elements in descending order.
+void revinorder(struct cell *BST,struct cell node,Int rank)
 {
 	static Int index=0;
 	//printf("\na=%d\n",a);
@@ -107,9 +74,11 @@ void inorder(struct cell *BST,struct cell node,Int rank)
 	if(node.right!=-1)
 	{
 		
-		inorder(BST,BST[node.right],rank);
+		revinorder(BST,BST[node.right],rank);
 	}
 	//printf("\n%d - %d\n",node.num,index);
+
+	//checking the index visited with the rank in the descending order of elements
 	if(rank==index+1)
 	{
 		a = node.num;
@@ -120,7 +89,7 @@ void inorder(struct cell *BST,struct cell node,Int rank)
 		index++;
 	if(node.left!=-1)
 	{
-		inorder(BST,BST[node.left],rank);
+		revinorder(BST,BST[node.left],rank);
 	}
 	//printf("\na=%d\n",a);
 }
@@ -130,9 +99,10 @@ int main()
 	Int size;
 	printf("Enter the size of the array - ");
 	scanf("%d",&size);
-	if(size>MAX_INT || size<0)
+	//size validation
+	if(size<=0)
 	{
-		printf("Size can't be greater than %d or smaller than 0",MAX_INT);
+		printf("\nInvalid Size\n");
 		return 0;
 	}
 	Int *input=(Int*)malloc(sizeof(Int)*size);
@@ -143,14 +113,11 @@ int main()
 	for(i=0;i<size;i++)
 	{
 		scanf("%d",&input[i]);
-		if(input[i]>MAX_INT)
-		{
-			printf("Input can't be greater than %d",MAX_INT);
-			return 0;
-		}
 	}
+	//defining root of BST
 	BST[0].num=input[0];
 	Int BST_size=1;
+	//adding elements with maintaining BST size
 	for(i=1;i<size;i++)
 	{
 		BST_size+=addElement(BST,input[i],i,size);
@@ -159,6 +126,7 @@ int main()
 	printf("\nEnter the rank -");
 	Int rank;
 	scanf("%d",&rank);
+	//rank validation and prompting user to enter until valid rank
 	while(1)
 	{
 		if(rank<=BST_size && rank>0)
@@ -170,7 +138,7 @@ int main()
 			scanf("%d",&rank);
 		}
 	}
-	inorder(BST,BST[0],rank);
+	revinorder(BST,BST[0],rank);
 	printf("\nRESULT = %d\n",a);
 	return 0;
 }

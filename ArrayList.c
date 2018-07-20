@@ -1,8 +1,11 @@
+//program to add element at specified index in an array
+
 #include<stdio.h>
 #include<stdlib.h>
 
-#define MAX_INT 32767
-
+/*
+method uses a loop to traverse till the index at which the elements needs to be added and the after adding the new element shifts all the remaining element after it by one position 
+*/
 void insertAt(int *input,int num,int index,int size)
 {
 		int temp1=num,temp2,i;
@@ -22,38 +25,42 @@ void insertAt(int *input,int num,int index,int size)
 int main()
 {
 	int size;
-	printf("Enter size");
+	printf("\nEnter size - ");
 	scanf("%d",&size);
-	if(size>MAX_INT)
+	//validation to check size by user
+	if(size<=0)
 	{
-		printf("Size cannot be bigger than %d",MAX_INT);
+		printf("\nInvalid size\n");
 		return 0;
 	}
 	int *input=(int *) malloc(sizeof(int)*size);
-	printf("\nEnter input array - \n");	
+	printf("\nEnter input array - ");	
 	int i;
 	for(i=0;i<size;i++)
 	{
 		scanf("%d",&input[i]);
-		if(input[i]>MAX_INT)
-		{
-			printf("Input cannot be greater than %d",MAX_INT);
-			return 0;
-		}
+		
 	}
-	printf("\nEnter the number you want to insert - \n");
+	printf("\nEnter the number you want to insert - ");
 	int num;
 	scanf("%d",&num);
-	printf("\nEnter the index at which you want to insert - \n");
+	printf("\nEnter the index at which you want to insert - ");
 	int index;
 	scanf("%d",&index);
+	//validation to check range of index by user
+	if(index<0 || index>size)
+	{
+		printf("\nIndex is out of range of the array\n");
+		return 0;
+	}	
 	size++;
-	input=(int *) realloc(input,sizeof(int)*size);
+	input=(int *) realloc(input,sizeof(int)*size);	
 	insertAt(input,num,index,size);
 	printf("\nADDED\n");
 	for(i=0;i<size;i++)
 	{
 		printf("%d ",input[i]);
 	}
+	printf("\n");
 	return 0;	
 }
